@@ -1,0 +1,6 @@
+ollama/
+open-webui/
+searxng/
+tika/
+.env
+.DS_Store

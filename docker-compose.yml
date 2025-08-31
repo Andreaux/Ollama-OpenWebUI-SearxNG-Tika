@@ -1,0 +1,105 @@
+# Self-hosted AI Stack
+#
+# Author: Andreaux
+# URL: https://github.com/Andreaux/Ollama-OpenWebUI-SearxNG-Tika
+#
+# 1. Ollama
+# 2. Open WebUI
+# 3. SearxNG
+# 4. Tika
+
+#
+# NOTE! This installation assumes you have an NVIDIA GPU with Drivers and the NVIDIA Container Toolkit set up correctly.#
+
+# Available models: https://ollama.com/library/
+
+services:
+
+# 1. Ollama
+
+  ollama:
+#   If you want to pull a specific container version, uncomment the next line instead of the following one.
+#    image: ollama/ollama:0.6.0
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - OLLAMA_KEEP_ALIVE=1h
+      - ENABLE_IMAGE_GENERATION=True
+      - GPUS=all
+    expose:
+      - 11434/tcp
+    ports:
+      - 11434:11434/tcp
+    healthcheck:
+      test: ollama --version || exit 1
+    command: serve
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./ollama:/root/.ollama
+    pull_policy: always
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+# 2. Open-WebUI
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - ENABLE_RAG_WEB_SEARCH=True
+      - RAG_WEB_SEARCH_ENGINE=searchng
+      - RAG_WEB_SEARCH_RESULT_COUNT=3
+      - RAG_WEB_SEARCH_CONCURRENT_REQUESTS=10
+      - SEARXNG_QUERY_URL=https://searcxng:8080/search?q=<query>
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./open-webui:/app/backend/data
+    expose:
+      - 8080/tcp
+    ports:
+      - 8080:8080/tcp
+    depends_on:
+      - ollama
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+# 3. SearxNG
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./searxng:/etc/searxng
+    depends_on:
+      - ollama
+      - open-webui
+    restart: unless-stopped
+
+# 4. Tika
+
+  tika:
+    image: apache/tika:latest-full
+    container_name: tika
+    ports:
+      - "9998:9998"
+    restart: unless-stopped
