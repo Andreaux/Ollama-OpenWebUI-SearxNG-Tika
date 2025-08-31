@@ -12,7 +12,7 @@ The stack features separate containers for:
 
 The stack also includes dependencies to make sure the services start in the desired order.
 
-My Home Lab runs Ubuntu Virtual Machines to host my Docker Projects where I run Nginx Proxy Manager as a reverse proxy. You will need to set up a proper domain and/or reverse proxy for Nextcloud to be served over HTTPS. In my Homelab, I use Nginx Proxy Manager as reverse proxy and to issue Let's Encrypt SSL certificates through Cloudflare so I don't have to keep a port open for certbot to call in (a free Cloudflare account totally works which will enable free wildcard certificates for all your local hosts as well).
+My Home Lab runs Ubuntu Virtual Machines to host my Docker Projects where I run Nginx Proxy Manager as a reverse proxy. You will need to set up a proper domain and/or reverse proxy for OpenWebUI to be served over HTTPS. In my Homelab, I use Nginx Proxy Manager as reverse proxy and to issue Let's Encrypt SSL certificates through Cloudflare so I don't have to keep a port open for certbot to call in (a free Cloudflare account totally works which will enable free wildcard certificates for all your local hosts as well).
 
 ## GPUs
 
