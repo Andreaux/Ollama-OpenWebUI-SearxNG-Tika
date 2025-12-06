@@ -1,4 +1,4 @@
-Stack version 1.0
+Stack version 1.1
 
 # Self-hosted AI LLM Stack with Ollama, OpenWebUI, SearxNG and Tika
 
