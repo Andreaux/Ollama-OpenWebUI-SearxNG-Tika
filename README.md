@@ -9,6 +9,7 @@ The stack features separate containers for:
 - OpenWebUI (ghcr.io/open-webui/open-webui:latest)
 - SearxNG (searxng/searxng:latest)
 - Tika (apache/tika:latest-full)
+- Valkey (bitnami/valkey:latest)
 
 The stack also includes dependencies to make sure the services start in the desired order.
 
