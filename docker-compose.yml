@@ -7,6 +7,7 @@
 # 2. Open WebUI
 # 3. SearxNG
 # 4. Tika
+# 5. Valkey
 
 #
 # NOTE! This installation assumes you have an NVIDIA GPU with Drivers and the NVIDIA Container Toolkit set up correctly.#
@@ -102,4 +103,17 @@ services:
     container_name: tika
     ports:
       - "9998:9998"
+    restart: unless-stopped
+
+# 5. Valkey
+
+  valkey:
+    image: bitnami/valkey:latest
+    container_name: valkey
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6739
+    ports:
+      - 6739:6739/tcp
     restart: unless-stopped
