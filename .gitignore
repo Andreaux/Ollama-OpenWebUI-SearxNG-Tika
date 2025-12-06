@@ -4,3 +4,4 @@ searxng/
 tika/
 .env
 .DS_Store
+debug.log
