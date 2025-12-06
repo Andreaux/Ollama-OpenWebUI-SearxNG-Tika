@@ -20,6 +20,26 @@ My Home Lab runs Ubuntu Virtual Machines to host my Docker Projects where I run 
 This deployment assumes you have 1 or more configured (or passed-through) NVIDIA GPUs with installed DRIVERS and the NVIDIA CONTAINER TOOLKIT!
 My Home Lab runs 2 NVIDIA GPUs dedicated to this stack, that are passed through to the VM by Proxmox. Your setup will vary, but you need at least one available GPU as the configuration assumes the presence of one.
 
+Here's how to pull and install the NVIDIA Container Toolkit if it's not already installed:
+
+```bash
+# Pull and install the NVIDIA Container Toolkit
+curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+    sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+
+# Configure the NVIDIA Container Toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+
+# Test GPU integration
+# Check tags for bundle version here: https://hub.docker.com/r/nvidia/cuda/tags
+docker run --gpus all nvidia/cuda:12.2.0-base-ubuntu20.04 nvidia-smi
+```
+
 ## Environment variables
 
 Docker Compose needs environment variables to set up the containers correctly (notably for example a DB password). I have included an EXAMPLE.env file to make what is expected there easier to understand. Make a copy, edit your secrets and anything you might add and rename the file to .env
